@@ -1,5 +1,7 @@
 package com.aacra.auth.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -43,7 +45,90 @@ public class UserDao {
     }
     
     
-    // For sign up
+    public boolean addOfficer(User user, InputStream fileContent, String workLocation, int officerWereda) throws IOException {
+    	/*
+    	 * This method will be used to create a new account for a user with a law enforcement officer's 
+    	 * role. What makes it different from the method for a regular user is that it takes as input three
+    	 * additional parameters: fileContent (w/c represents an officer's ID in picture format), workLocation
+    	 * (w/c represents the subcity the officer works in), and officer's wereda (the wereda in that specific 
+    	 * subcity)
+    	 * */
+        String query = "INSERT INTO users (fname, lname, email, password, role, officerIdPhoto, officerWereda, workLocation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        DatabaseUtility dbUtil = new DatabaseUtility();
+
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+
+            preparedStatement.setString(1, user.getFname());
+            preparedStatement.setString(2, user.getLname());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getPassword());
+            preparedStatement.setString(5, user.getRole());
+            preparedStatement.setBlob(6, fileContent);
+            preparedStatement.setInt(7, officerWereda);
+            preparedStatement.setString(8, workLocation);
+            
+                
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }    	
+    }
+    
+    
+    
+    
+    public boolean addAnalyst(User user, InputStream fileContent, String workLocation) throws IOException {
+    	/*
+    	 * This method will be used to create a new account for a user with a crime analyst's 
+    	 * role. What makes it different from the method for a regular user is that it takes as input two
+    	 * additional parameters: fileContent (w/c represents an analyst's certification), and workLocation
+    	 * (w/c represents the organization or department the analyst works at).
+    	 * */
+        String query = "INSERT INTO users (fname, lname, email, password, role, workLocation, analystCertification) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        DatabaseUtility dbUtil = new DatabaseUtility();
+
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+
+            preparedStatement.setString(1, user.getFname());
+            preparedStatement.setString(2, user.getLname());
+            preparedStatement.setString(3, user.getEmail());
+            preparedStatement.setString(4, user.getPassword());
+            preparedStatement.setString(5, user.getRole());
+            preparedStatement.setString(6, workLocation);
+            preparedStatement.setBlob(7, fileContent);
+            
+                
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } 
+    }
+    
+    
+    
+    
     public boolean checkUserData(User user, String confirmPassword) {
     	/*
     	 * Checks if the data entered fulfills all given requirements and 

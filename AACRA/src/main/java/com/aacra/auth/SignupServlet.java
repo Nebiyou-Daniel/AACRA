@@ -54,13 +54,13 @@ public class SignupServlet extends HttpServlet{
             	request.getRequestDispatcher(urlPage).forward(request, response);        		
         		
         	} else if ("officer".equals(user.getRole())) {
-        		urlPage = "/officerSignup";
+        		urlPage = "/pages/OfficerSignupPage.jsp";
         		
             	request.setAttribute("userData", user);
             	request.getRequestDispatcher(urlPage).forward(request, response);   
             	
         	} else if ("analyst".equals(user.getRole())) {
-        		urlPage = "analystSignup";
+        		urlPage = "/pages/AnalystSignupPage.jsp";
         		
             	request.setAttribute("userData", user);
             	request.getRequestDispatcher(urlPage).forward(request, response);
