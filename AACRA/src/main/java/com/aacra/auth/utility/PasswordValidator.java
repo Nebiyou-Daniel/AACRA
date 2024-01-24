@@ -4,7 +4,7 @@ public class PasswordValidator {
 	
     public boolean isPasswordValid(String password) {
         // Check for at least one special character
-        boolean hasSpecialCharacter = password.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*");
+        boolean hasSpecialCharacter = password.matches(".*[\\p{Punct}].*");
 
         // Check for minimum length of 8 characters
         boolean hasMinimumLength = password.length() >= 8;

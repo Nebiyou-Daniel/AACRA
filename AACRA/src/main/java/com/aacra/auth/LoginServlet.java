@@ -12,9 +12,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/regularUserSignup")
-public class RegularUserSignupServlet extends HttpServlet{
-	
+@WebServlet("/pages/login")
+public class LoginServlet extends HttpServlet{
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doPost(request, response);
@@ -23,22 +23,30 @@ public class RegularUserSignupServlet extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		User user = (User) request.getAttribute("userData");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
 
+        User user = new User();
+        
+        user.setEmail(email);
+        user.setPassword(password);
+        
         UserDao userDao = new UserDao();
         
         // Check if the email is available, all form data are in correct formats, 
         // and adhere to conditions they were given.     
-        boolean success = userDao.addUser(user);
+        User userData = userDao.validateUser(user);
 
-        if (success) {
-        	request.setAttribute("userData", user);
-        	request.getRequestDispatcher("/main").forward(request, response);
+        if (userData != null) {
+        	
+        	request.getSession().setAttribute("userData", userData);
+        	request.getRequestDispatcher("/main").forward(request, response);        	
 
         } else {
+        	// Redirect to sign up error servlet to check what the problem was that prevented the user to sign up
         	
-        	PrintWriter out = response.getWriter();
-        	out.println("<h2>For some reason, it is unable to sign me up. Perhaps the sign up error servlet thing should be implemented here too.</h2>");
+        	request.setAttribute("userData", user);
+        	request.getRequestDispatcher("/loginError").forward(request, response);
         }
-    }
+	}
 }

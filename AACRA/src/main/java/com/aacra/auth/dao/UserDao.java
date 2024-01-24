@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 import com.aacra.auth.model.User;
 import com.aacra.auth.utility.*;
+import com.aacra.utility.DatabaseUtility;
 
 
 public class UserDao {
@@ -17,13 +18,11 @@ public class UserDao {
     
     public boolean addUser(User user) {
         String query = "INSERT INTO users (fname, lname, email, password, role) VALUES (?, ?, ?, ?, ?)";
-
-        DatabaseUtility dbUtil = new DatabaseUtility();
-
+        
         try {
         	
         	Class.forName("com.mysql.cj.jdbc.Driver");
-        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
         
         	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
 
@@ -55,12 +54,10 @@ public class UserDao {
     	 * */
         String query = "INSERT INTO users (fname, lname, email, password, role, officerIdPhoto, officerWereda, workLocation) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-        DatabaseUtility dbUtil = new DatabaseUtility();
-
         try {
         	
         	Class.forName("com.mysql.cj.jdbc.Driver");
-        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
         
         	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
 
@@ -97,12 +94,10 @@ public class UserDao {
     	 * */
         String query = "INSERT INTO users (fname, lname, email, password, role, workLocation, analystCertification) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        DatabaseUtility dbUtil = new DatabaseUtility();
-
         try {
         	
         	Class.forName("com.mysql.cj.jdbc.Driver");
-        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
         
         	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
 
@@ -131,7 +126,7 @@ public class UserDao {
     
     public boolean checkUserData(User user, String confirmPassword) {
     	/*
-    	 * Checks if the data entered fulfills all given requirements and 
+    	 * Checks if the data entered during SIGN UP fulfills all given requirements and 
     	 * that the email doesn't already exist in the database.
     	 * 
     	 * This involves using the NameValidator and PasswordValidator classes for the names and password
@@ -141,12 +136,10 @@ public class UserDao {
     	 * */
     	String selectUserQuery = "SELECT * FROM users WHERE email = ?";
 
-        DatabaseUtility dbUtil = new DatabaseUtility();
-
         try {
         	
         	Class.forName("com.mysql.cj.jdbc.Driver");
-        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
         
         	PreparedStatement ps = connection.prepareStatement(selectUserQuery);
         	
@@ -171,7 +164,7 @@ public class UserDao {
             	// If first name or last name don't have valid caharacters, password isn't valid or password 
             	// and confirm password aren't the same
             	if (!nv.isAlphabetic(user.getFname()) || !nv.isAlphabetic(user.getLname()) 
-            			|| pv.isPasswordValid(user.getPassword()) || !user.getPassword().equals(confirmPassword)) {
+            			|| !pv.isPasswordValid(user.getPassword()) || !(user.getPassword().equals(confirmPassword))) {
             		
             		return false;
             	}
@@ -187,13 +180,13 @@ public class UserDao {
     
     
     // For login
-    public boolean validateUser(User user) {
+    public User validateUser(User user) {
         String query = "SELECT * FROM users WHERE email = ? AND password = ?";
-        DatabaseUtility dbUtil = new DatabaseUtility();
 
+        User validatedUser = new User();
         try {
         	Class.forName("com.mysql.cj.jdbc.Driver");
-        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
         
 	        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
@@ -201,12 +194,22 @@ public class UserDao {
 	            preparedStatement.setString(2, user.getPassword());
 	
 	            ResultSet resultSet = preparedStatement.executeQuery();
-	            return resultSet.next();  
+	            
+	            if (resultSet.next()) {
+	            	
+	            	validatedUser.setFname(resultSet.getString("fname"));
+	            	validatedUser.setLname(resultSet.getString("lname"));
+	            	validatedUser.setEmail(resultSet.getString("email"));
+	            	validatedUser.setPassword(resultSet.getString("password"));
+	            	validatedUser.setRole(resultSet.getString("role"));
+	            	
+	            }
+	            return validatedUser;
 	        }
         
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            return false;
+	        return null;
         }
     }
 }

@@ -33,7 +33,7 @@
             window.location.href = "pages/LoginPage.jsp";
         }
         function redirectToSignupPage() {
-            window.location.href = "pages/SignupPage.jsp";
+            window.location.href = "pages/TermsOfService.jsp";
         }
     </script>
 </body>

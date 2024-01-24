@@ -20,9 +20,8 @@ public class HomePageServlet extends HttpServlet{
 		
 		User user = (User) request.getAttribute("userData");
 		
-		PrintWriter out = response.getWriter();
-		out.println("<h1> You have successfully signed up </h1>");
-		out.print("<h2>" + user.getFname() + " " + user.getLname() + "</h2>");
+		request.setAttribute("userData", user);
+		request.getRequestDispatcher("/pages/MainPage.jsp").forward(request, response);	
 	}
 	
 	@Override

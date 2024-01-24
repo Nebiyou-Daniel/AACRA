@@ -9,7 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import com.aacra.auth.model.User;
-import com.aacra.auth.utility.DatabaseUtility;
+import com.aacra.utility.DatabaseUtility;
 import com.aacra.auth.utility.NameValidator;
 import com.aacra.auth.utility.PasswordValidator;
 
@@ -45,7 +45,7 @@ public class SignupErrorServlet extends HttpServlet{
         try {
         	
         	Class.forName("com.mysql.cj.jdbc.Driver");
-        	connection = DriverManager.getConnection(dbUtil.DATABASE_URL, dbUtil.DATABASE_USERNAME, dbUtil.DATABASE_PASSWORD);
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
         
         	PreparedStatement ps = connection.prepareStatement(selectUserQuery);
         	
@@ -83,14 +83,14 @@ public class SignupErrorServlet extends HttpServlet{
                 	request.getRequestDispatcher("pages/SignupPage.jsp").forward(request, response);
             		
                 // Password is invalid
-            	} else if (pv.isPasswordValid(user.getPassword()) ){
+            	} else if (!pv.isPasswordValid(user.getPassword()) ){
                 	request.setAttribute("userData", user);
                 	request.setAttribute("insertedSecondPassword", confirmPassword);            	
                 	request.setAttribute("invalidPassword", invalidPasswordErrorMessage);
                 	request.getRequestDispatcher("pages/SignupPage.jsp").forward(request, response);
             		
                 // Confirm Password is invalid
-            	} else if (!user.getPassword().equals(confirmPassword)) {
+            	} else if (!(user.getPassword().equals(confirmPassword))) {
                 	request.setAttribute("userData", user);
                 	request.setAttribute("insertedSecondPassword", confirmPassword);            	
                 	request.setAttribute("invalidSecondPassword", differentPasswordErrorMessage);

@@ -65,7 +65,9 @@
 		<label for="confirmPassword">Confirm Password</label>
 		<input type="password" id="confirmPassword" name="confirmPassword" size="20" required value="<%= confirmPassword%>"> <br>
 		
-		<input type="checkbox" onclick="showPassword()" >Show Passwords <br><br>
+		<span class="text-danger mb-1"><%=request.getAttribute("invalidSecondPassword")!= null ? request.getAttribute("invalidSecondPassword") : "" %></span><br>
+
+		<input type="checkbox" onclick="showPassword()" >Show Password <br><br>
 				
 		<label for="role">What is your job?</label>
 		<select id="role" name="role">
