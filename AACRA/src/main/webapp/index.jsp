@@ -6,6 +6,7 @@
 	<meta charset="UTF-8">
 	<link rel="icon" type="image/x-icon" href="">
 	<title>Welcome to AACRA!</title>
+
 </head>
 <body>
 	<div class="hero">

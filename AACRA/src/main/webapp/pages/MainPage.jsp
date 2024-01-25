@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Home</title>
+
 </head>
 <%@page import="com.aacra.auth.model.User" %>
 <body>
@@ -15,22 +16,16 @@
 	
 	String fname = "";
 	String lname = "";
-	String email = "";
-	String password = "";
 	String role = "";
 	
 	if (insertedUserData != null){
 		
 		String insertedFname = insertedUserData.getFname();
 		String insertedLname = insertedUserData.getLname();
-		String insertedEmail = insertedUserData.getEmail();
-		String insertedPassword = insertedUserData.getPassword();
 		String insertedRole = insertedUserData.getRole();
 	
 		fname = (insertedFname == null) ? "" : insertedFname;
 		lname = (insertedLname == null) ? "" : insertedLname;
-		email = (insertedEmail == null) ? "" : insertedEmail;
-		password = (insertedPassword == null) ? "" : insertedPassword;
 		role = (insertedRole == null) ? "" : insertedRole;;
 	}
 	%>
@@ -40,12 +35,11 @@
     
     <nav>
         <ul>
-            <li><a href="/pages/Search.jsp">Search Records</a></li>
+            <li><a href="Search.jsp">Search Records</a></li>
         <% if(role.equals("admin")){
    
         %>
             <li><a href="AddRecord.jsp">Add New Record</a></li>
-            <li><a href="ViewAllRecords">View All Records</a></li>
            	<li><a href="viewRequests">View Requests from Users</a></li> 
          <%
         }

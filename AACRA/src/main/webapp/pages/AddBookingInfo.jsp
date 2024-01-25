@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<form action="addBookingInfo" method="post">
+	<form action="addBookingInfo" method="post" enctype="multipart/form-data">
 		<fieldset>
 	        <legend>Booking Information</legend>
 	        <label for="booking_number">Booking Number:</label>
@@ -17,6 +17,12 @@
 	        <label for="mugshot">Mugshot:</label>
 	        <input type="file" name="mugshot" id="mugshot" accept="image/*" required><br>
 	    </fieldset>
+	    
+	    <input type="hidden" name="arrest_record_id" value="<%= request.getParameter("arrest_record_id")%>">
+	    <input type="hidden" name="criminal_id" value="<%= request.getParameter("criminal_id")%>">
+	    <input type="hidden" name="fname" value="<%= request.getParameter("fname")%>">
+	    <input type="hidden" name="lname" value="<%= request.getParameter("lname")%>">
+	    
 	    <input type="submit" value="Submit">
 
 	</form>

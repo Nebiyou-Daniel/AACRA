@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 
 public class ArrestRecord {
+	
+	private int arrest_record_id;
 	private int criminalId;
 	private LocalDateTime  dateTimeArrest;
 	private String arrestingAgency;
@@ -11,6 +13,12 @@ public class ArrestRecord {
 	private String charges;
 	private String arrestLocation;
 	
+	public int getArrestRecordId() {
+		return arrest_record_id;
+	}
+	public void setArrestRecordId(int arrest_record_id) {
+		this.arrest_record_id = arrest_record_id;
+	}	
 	public int getCriminalId() {
 		return criminalId;
 	}

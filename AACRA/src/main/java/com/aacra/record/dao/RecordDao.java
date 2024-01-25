@@ -1,10 +1,15 @@
 package com.aacra.record.dao;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import com.aacra.record.model.ArrestRecord;
 import com.aacra.record.model.BookingRecord;
@@ -77,7 +82,7 @@ public class RecordDao {
     }
     
     public boolean addBookingInfo(BookingRecord bi) {
-        String query = "INSERT INTO booking_info (arrest_record_id, mugshot, booking_number) VALUES (?, ?, ?)";
+        String query = "INSERT INTO booking_info (arrest_record_id, mugshot, booking_number, criminal_id) VALUES (?, ?, ?, ?)";
         
         try {
         	
@@ -89,6 +94,7 @@ public class RecordDao {
             preparedStatement.setInt(1, bi.getArrestRecordId());
             preparedStatement.setBlob(2, bi.getMugshot());
             preparedStatement.setString(3, bi.getBookingNumber());
+            preparedStatement.setInt(4, bi.getCriminalId());
                 
             int rowsAffected = preparedStatement.executeUpdate();
             
@@ -160,5 +166,174 @@ public class RecordDao {
             e.printStackTrace();
             return 0;
         }
+    }
+
+    public CriminalPersonalRecord getCriminalPersonalRecordById(int criminalId) {
+    	
+    	String query = "SELECT * FROM criminal_personal_info WHERE criminal_id = ?";
+    	CriminalPersonalRecord cpr = new CriminalPersonalRecord();
+        try {	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement ps = connection.prepareStatement(query);
+        	
+            ps.setInt(1, criminalId);
+            
+			// Check if the account is in there
+			ResultSet resultSet = ps.executeQuery();
+			
+            if (resultSet.next()) {
+            	
+            	cpr.setAddress(resultSet.getString("address"));
+            	cpr.setDateOfBirth(resultSet.getDate("date_of_birth"));
+            	cpr.setFname(resultSet.getString("criminal_fname"));
+            	cpr.setGender(resultSet.getString("gender"));
+            	cpr.setKebeleId(resultSet.getString("kebele_id"));
+            	cpr.setLname(resultSet.getString("criminal_lname"));
+            	cpr.setPhoneNumber(resultSet.getString("phone_number"));
+            	cpr.setRaceAndEthnicity(resultSet.getString("race_ethnicity"));
+            	
+            }
+       
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return cpr;
+    	
+    }
+    
+    public ArrayList<ArrestRecord> getArrestRecordById(int criminalId) {
+    	
+    	String query = "SELECT * FROM arrest_records WHERE criminal_id = ?";
+    	ArrayList<ArrestRecord> recordList = new ArrayList<ArrestRecord>();
+        try {	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement ps = connection.prepareStatement(query);
+        	
+            ps.setInt(1, criminalId);
+            
+			// Check if the account is in there
+			ResultSet resultSet = ps.executeQuery();
+			
+            while (resultSet.next()) {
+            	ArrestRecord ar = new ArrestRecord();
+            	
+            	ar.setDateTimeArrest((LocalDateTime) resultSet.getObject("date_time_arrest"));
+            	ar.setCriminalId(criminalId);
+            	ar.setArrestRecordId(resultSet.getInt("arrest_record_id"));
+            	ar.setArrestingAgency(resultSet.getString("arresting_agency"));
+            	ar.setArrestingOfficer(resultSet.getString("arresting_officer"));
+            	ar.setCharges(resultSet.getString("charges"));
+            	ar.setArrestLocation(resultSet.getString("arrest_location"));
+            	
+            	recordList.add(ar);            	
+            }
+       
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return recordList;
+        
+    }
+//    public ArrayList<BookingRecord> getBookingRecordById(int criminalId, OutputStream outputStream) throws IOException {
+
+    public ArrayList<BookingRecord> getBookingRecordById(int criminalId) throws IOException {
+    	
+    	String query = "SELECT * FROM booking_info WHERE criminal_id = ?";
+    	ArrayList<BookingRecord> recordList = new ArrayList<BookingRecord>();
+        try {	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement ps = connection.prepareStatement(query);
+        	
+            ps.setInt(1, criminalId);
+            
+			// Check if the account is in there
+			ResultSet resultSet = ps.executeQuery();
+			
+            while (resultSet.next()) {
+            	BookingRecord bi = new BookingRecord();
+            	
+            	bi.setCriminalId(criminalId);
+            	bi.setArrestRecordId(resultSet.getInt("arrest_record_id"));
+            	bi.setMugshot(BookingRecord.blobToInputStream(resultSet.getBlob("mugshot")));
+            	bi.setBookingNumber(resultSet.getString("booking_number"));
+            	
+//            	bi.copyInputStreamToOutputStream(bi.getMugshot(), outputStream);
+            	
+            	recordList.add(bi);            	
+            }
+       
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return recordList;
+    }
+    
+    public ArrayList<ConvictionRecord> getConvictionRecordById(int criminalId) {
+    	
+    	String query = "SELECT * FROM conviction_records WHERE criminal_id = ?";
+    	ArrayList<ConvictionRecord> recordList = new ArrayList<ConvictionRecord>();
+        try {	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement ps = connection.prepareStatement(query);
+        	
+            ps.setInt(1, criminalId);
+            
+			// Check if the account is in there
+			ResultSet resultSet = ps.executeQuery();
+			
+            while (resultSet.next()) {
+            	ConvictionRecord cr = new ConvictionRecord();
+            	
+            	cr.setCriminalId(criminalId);
+            	cr.setDateOfConviction(resultSet.getDate("date_of_conviction"));
+            	cr.setCriminalOffenses(resultSet.getString("convicted_offenses"));
+            	cr.setSentencingDetails(resultSet.getString("sentencing_details"));
+            	cr.setParoleAndProbationStatus(resultSet.getString("probation_parole_status"));
+            	
+            	recordList.add(cr);            	
+            }
+       
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return recordList;
+    }
+
+    public boolean editArrestRecord(ArrestRecord ar) {
+        String query = "UPDATE arrest_records SET date_time_arrest = ?, arresting_agency = ?, arresting_officer = ?,"
+        		+ " charges = ?, arrest_location = ? WHERE arrest_record_id = ?";
+        
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+
+            preparedStatement.setObject(1, ar.getDateTimeArrest());
+            preparedStatement.setString(2, ar.getArrestingAgency());
+            preparedStatement.setString(3, ar.getArrestingOfficer());
+            preparedStatement.setString(4, ar.getCharges());
+            preparedStatement.setString(5, ar.getArrestLocation());
+            preparedStatement.setInt(6, ar.getArrestRecordId());
+                
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    	
     }
 }

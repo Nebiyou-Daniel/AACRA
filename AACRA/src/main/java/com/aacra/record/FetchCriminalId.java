@@ -32,7 +32,8 @@ public class FetchCriminalId extends HttpServlet{
         int criminalId = record.getCriminalId(kebeleId, address, phoneNumber, fname, lname);
         
         if (criminalId != 0) {
-        	request.setAttribute("criminalData", cpr);
+        	request.setAttribute("fname", fname);
+        	request.setAttribute("lname", lname);
         	request.setAttribute("criminal_id", criminalId);
         	request.getRequestDispatcher("/pages/AdditionalInfo.jsp").forward(request, response); 
         	

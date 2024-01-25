@@ -39,8 +39,6 @@ public class SignupErrorServlet extends HttpServlet{
         
     	String selectUserQuery = "SELECT * FROM users WHERE email = ?";
 
-        DatabaseUtility dbUtil = new DatabaseUtility();
-
         Connection connection;
         try {
         	

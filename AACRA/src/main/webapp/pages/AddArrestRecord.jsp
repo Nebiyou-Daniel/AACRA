@@ -8,7 +8,7 @@
 </head>
 <body>
 
-	<form action="addArrestRecord?criminal_id=<%= request.getParameter("criminal_id")%>&fname=<%= request.getParameter("fname")%>&lname=<%= request.getParameter("lname")%>" method="post">
+	<form action="addArrestRecord" method="get">
 		<fieldset>
 	        <legend>Arrest Information</legend>
 	        <label for="date_time_arrest">Date and Time of Arrest:</label>
@@ -27,10 +27,11 @@
 	        <input type="text" name="arrest_location" id="arrest_location" required><br>
 	    </fieldset>
 	    
-	    <input>
-	    <input>
+	    <input type="hidden" name="criminal_id" value="<%= request.getParameter("criminal_id")%>">
+	    <input type="hidden" name="fname" value="<%= request.getParameter("fname")%>">
+	    <input type="hidden" name="lname" value="<%= request.getParameter("lname")%>">	    
 	    
-	    <input type="submit" value="Submit">
+	    <input type="submit" value="Next">
 
 	</form>
 </body>
