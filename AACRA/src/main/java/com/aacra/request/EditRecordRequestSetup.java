@@ -1,4 +1,4 @@
-package com.aacra.record;
+package com.aacra.request;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -16,9 +16,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/pages/editArrestRecordSetup")
-public class EditArrestRecordSetup extends HttpServlet{
-	public String query = "SELECT * FROM arrest_records WHERE arrest_record_id = ?";
+@WebServlet("/pages/editRecordRequestSetup")
+public class EditRecordRequestSetup extends HttpServlet{
+	
+	public String query = "SELECT * FROM record_requests WHERE request_id = ?";
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -26,21 +27,22 @@ public class EditArrestRecordSetup extends HttpServlet{
 	}
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		int arrest_record_id = Integer.parseInt(request.getParameter("arrest_record_id"));
-				
+		int request_id = Integer.parseInt(request.getParameter("request_id"));
+		String fname = request.getParameter("fname");
+		String lname = request.getParameter("lname");
+		
 		try {			
-        	Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
 			PreparedStatement statement = connection.prepareStatement(query);
 
-			statement.setInt(1, arrest_record_id);
+			statement.setInt(1, request_id);
 			
 			try (ResultSet rs = statement.executeQuery()) {
 				
-				request.setAttribute("arrest_record_id", arrest_record_id);
 				request.setAttribute("resultSet", rs);
-				
-				RequestDispatcher rd = request.getRequestDispatcher("/pages/EditArrestRecord.jsp?criminal_id=" + arrest_record_id);
+				request.setAttribute("fname", fname);
+				request.setAttribute("lname", lname);
+				RequestDispatcher rd = request.getRequestDispatcher("/pages/EditRecordRequest.jsp?request_id=" + request_id);
 				rd.forward(request, response);
 				
 				connection.close();				
@@ -49,9 +51,6 @@ public class EditArrestRecordSetup extends HttpServlet{
 		} catch (IOException | SQLException e) {
 			e.printStackTrace();
 			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }

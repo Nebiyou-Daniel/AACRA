@@ -3,12 +3,19 @@ package com.aacra.auth.model;
 import com.aacra.auth.utility.PasswordHashing;
 
 public class User {
+	private int userId;
 	private String fname;
 	private String lname;
 	private String email;
 	private String password;
 	private String role;
 	
+	public int getUserId() {
+		return userId;
+	}
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}	
 	public String getFname() {
 		return fname;
 	}

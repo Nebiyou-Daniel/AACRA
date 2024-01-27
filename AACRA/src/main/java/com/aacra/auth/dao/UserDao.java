@@ -16,6 +16,28 @@ import com.aacra.utility.DatabaseUtility;
 public class UserDao {
     private Connection connection;
     
+    public int fetchUserId(String email) {
+        String query = "SELECT * FROM users WHERE email = ?";
+
+        try {
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+	        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+	            preparedStatement.setString(1, email);	
+	            ResultSet resultSet = preparedStatement.executeQuery();
+	            
+	            resultSet.next();
+	            return resultSet.getInt("userId");	            	
+	        }
+        
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+	        return 0;
+        }    	
+    }
+    
     public boolean addUser(User user) {
         String query = "INSERT INTO users (fname, lname, email, password, role) VALUES (?, ?, ?, ?, ?)";
         
@@ -197,6 +219,7 @@ public class UserDao {
 	            
 	            if (resultSet.next()) {
 	            	
+	            	validatedUser.setUserId(resultSet.getInt("userId"));
 	            	validatedUser.setFname(resultSet.getString("fname"));
 	            	validatedUser.setLname(resultSet.getString("lname"));
 	            	validatedUser.setEmail(resultSet.getString("email"));

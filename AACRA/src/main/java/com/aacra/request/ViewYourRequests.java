@@ -1,7 +1,8 @@
-package com.aacra.record;
+package com.aacra.request;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,31 +17,30 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet("/pages/editArrestRecordSetup")
-public class EditArrestRecordSetup extends HttpServlet{
-	public String query = "SELECT * FROM arrest_records WHERE arrest_record_id = ?";
+@WebServlet("/pages/viewYourRequests")
+public class ViewYourRequests extends HttpServlet{
+	
+	public String searchQuery = "SELECT criminal_personal_info.criminal_id, criminal_personal_info.criminal_fname, "
+			+ "criminal_personal_info.criminal_lname, record_requests.* "
+			+ "FROM record_requests INNER JOIN criminal_personal_info ON "
+			+ "record_requests.criminal_id=criminal_personal_info.criminal_id WHERE user_id = ?";
 	
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		doGet(request, response);
-	}
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		int arrest_record_id = Integer.parseInt(request.getParameter("arrest_record_id"));
-				
-		try {			
-        	Class.forName("com.mysql.cj.jdbc.Driver");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		int user_id = Integer.parseInt(request.getParameter("userId"));
+        
+		try {				
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
-			PreparedStatement statement = connection.prepareStatement(query);
-
-			statement.setInt(1, arrest_record_id);
+			PreparedStatement statement = connection.prepareStatement(searchQuery);
+			
+			statement.setInt(1, user_id);
 			
 			try (ResultSet rs = statement.executeQuery()) {
 				
-				request.setAttribute("arrest_record_id", arrest_record_id);
 				request.setAttribute("resultSet", rs);
-				
-				RequestDispatcher rd = request.getRequestDispatcher("/pages/EditArrestRecord.jsp?criminal_id=" + arrest_record_id);
+				RequestDispatcher rd = request.getRequestDispatcher("/pages/ShowAllRecordRequests.jsp");
 				rd.forward(request, response);
 				
 				connection.close();				
@@ -53,5 +53,6 @@ public class EditArrestRecordSetup extends HttpServlet{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+
+    }
 }

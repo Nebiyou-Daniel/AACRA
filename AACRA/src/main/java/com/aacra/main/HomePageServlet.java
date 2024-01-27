@@ -17,10 +17,7 @@ public class HomePageServlet extends HttpServlet{
 	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		User user = (User) request.getAttribute("userData");
-		
-		request.setAttribute("userData", user);
+
 		request.getRequestDispatcher("/pages/MainPage.jsp").forward(request, response);	
 	}
 	

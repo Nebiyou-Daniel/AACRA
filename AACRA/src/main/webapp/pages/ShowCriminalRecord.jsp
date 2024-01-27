@@ -111,10 +111,10 @@
   <div class="nav">
 	  <ul>
 	  	<li><a href="Search.jsp">Search for another Criminal Record</a></li>
-		<% 		
+		<% 	
 		if(role.equals("regular")){  
         %>
-	  	<li><a href="RequestForRestrictedRecord.jsp">Make Request for Restricted Record</a></li>
+	  	<li><a href="RequestForRestrictedRecord.jsp?criminal_id=<%= request.getAttribute("criminal_id")%>&fname=<%= cpr.getFname()%>&lname=<%= cpr.getLname()%>">Make Request for Restricted Record</a></li>
          <%
         }
          %>
@@ -153,6 +153,9 @@
 	        <td>Race/Ethnicity:</td>
 	        <td><%= cpr.getRaceAndEthnicity()%></td>
 	    </tr>
+	    <% 		
+		if(!(role.equals("regular"))){  
+        %>
 	    <tr>
 	        <td>Kebele ID:</td>
 	        <td><%= cpr.getKebeleId()%></td>
@@ -166,11 +169,14 @@
 	        <td><%= cpr.getPhoneNumber()%></td>
 	    </tr>
 	    <tr>
-	        <td colspan="2" style="background-color:yellow;"><a href="">EDIT RECORD</a></td>
+	        <td colspan="2" style="background-color:yellow;"><a href="editCriminalRecordSetup?criminal_id=<%= cpr.getCriminalId()%>">EDIT RECORD</a></td>
 	    </tr>
 	    <tr>
-	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="showPersonalConfirmation()">DELETE RECORD</button></td>
+	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="confirmCriminalRecordDelete()">DELETE RECORD</button></td>
 	    </tr>	    
+         <%
+        }
+         %>
 	</table>
 	
   </div>
@@ -187,9 +193,10 @@
 	Boolean isThereArrestData = false;
 	String noArrestData = cpr.getFname() + " " + cpr.getLname() + " HAS NO KNOWN ARREST RECORD";
 	
-  	int arrestCount = 1;
-  	for (ArrestRecord arrestRecord: ar){
-  		isThereArrestData = true;
+	if (!(role.equals("regular"))){		
+	  	int arrestCount = 1;
+	  	for (ArrestRecord arrestRecord: ar){
+	  		isThereArrestData = true;
   		%>
   		<h2>Arrest Record <%= arrestCount%></h2>
   	  <table>
@@ -223,17 +230,22 @@
 	        <td colspan="2" style="background-color:yellow;"><a href="editArrestRecordSetup?arrest_record_id=<%= arrestRecord.getArrestRecordId()%>">EDIT RECORD</a></td>
 	    </tr>
 	    <tr>
-	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="showArrestConfirmation()">DELETE RECORD</button></td>
+	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="confirmArrestRecordDelete()">DELETE RECORD</button></td>
 	    </tr>
 	</table>
 	
   		
-  		<%
-  		arrestCount++;
-  	}
-  %>
   		<br>
 		<h1 style="color: green; font-weight: 900; font-size: 24px; text-align: center;"> <%= isThereArrestData ? "" : noArrestData %></h1>
+  		<%
+  		arrestCount++;
+	  	}
+  	} else {
+  		%>
+  		<h1 style="color: orange; font-weight: 900; font-size: 24px; text-align: center;">You aren't given access to the arrest records. If you want, you will have to request for it using the link given above.</h1>
+  		<%
+  	}
+  %>
   </div>
   <div class="content">
     	<% 		
@@ -247,9 +259,10 @@
 	Boolean isThereBookingData = false;
 	String noBookingData = cpr.getFname() + " " + cpr.getLname() + " HAS NO KNOWN BOOKING RECORD";
 	
-  	int bookingCount = 1;
-  	for (BookingRecord bookingInfo: bi){
-  		isThereBookingData = true;
+	if (!(role.equals("regular"))){
+	  	int bookingCount = 1;
+	  	for (BookingRecord bookingInfo: bi){
+	  		isThereBookingData = true;
 
   		%>
   		<h2>Booking Record/Information <%= bookingCount%></h2>
@@ -269,18 +282,23 @@
 	        <td><img alt="Criminal's Photo"></td>
 	    </tr>
 	    <tr>
-	        <td colspan="2" style="background-color:yellow;"><a href="">EDIT RECORD</a></td>
+	        <td colspan="2" style="background-color:yellow;"><a href="editBookingRecordSetup?booking_info_id=<%= bookingInfo.getBookingInfoId()%>">EDIT RECORD</a></td>
 	    </tr>
 	    <tr>
-	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="showBookingConfirmation()">DELETE RECORD</button></td>
+	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="confirmBookingRecordDelete()">DELETE RECORD</button></td>
 	    </tr>
 	</table>
-  		<%
-  		bookingCount++;
-  	}
-  %>
   		<br>
 		<h1 style="color: green; font-weight: 900; font-size: 24px; text-align: center;"> <%= isThereBookingData ? "" : noBookingData %></h1>
+  		<%
+  		bookingCount++;
+	  	}
+  	} else {
+  		%>
+  		<h1 style="color: orange; font-weight: 900; font-size: 24px; text-align: center;">You aren't given access to the booking records. If you want, you will have to request for it using the link given above.</h1>
+  		<%
+  	}
+  %>
   </div>
   
   <div class="content">
@@ -295,9 +313,10 @@
 	Boolean isThereConvictionData = false;
 	String noConvictionData = cpr.getFname() + " " + cpr.getLname() + " HAS NO KNOWN CONVICTION RECORD";
 	
-  	int convictionCount = 1;
-  	for (ConvictionRecord convictionRecord: cr){
-  		isThereConvictionData = true;
+	if (!(role.equals("regular"))){
+	  	int convictionCount = 1;
+	  	for (ConvictionRecord convictionRecord: cr){
+	  		isThereConvictionData = true;
   		%>
   		<h2>Conviction Record <%= convictionCount%></h2>
   	  <table>
@@ -324,95 +343,57 @@
 	        <td><%= convictionRecord.getParoleAndProbationStatus()%></td>
 	    </tr>
 	    <tr>
-	        <td colspan="2" style="background-color:yellow;"><a href="">EDIT RECORD</a></td>
+	        <td colspan="2" style="background-color:yellow;"><a href="editConvictionRecordSetup?conviction_record_id=<%= convictionRecord.getConvictionRecordId()%>&criminal_id=<%= cpr.getCriminalId()%>">EDIT RECORD</a></td>
 	    </tr>
 	    <tr>
-	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="showConvictionConfirmation()">DELETE RECORD</button></td>
+	        <td colspan="2" style="background-color:red;" ><button style="background-color:red; color:white; border: 0;" onclick="confirmConvictionRecordDelete()">DELETE RECORD</button></td>
 	    </tr>	    
 	</table>
-  		<%
-  		convictionCount++;
-  	}
-  %>
   		<br>
 		<h1 style="color: green; font-weight: 900; font-size: 24px; text-align: center;"> <%= isThereConvictionData ? "" : noConvictionData %></h1>
+  		<%
+  		convictionCount++;
+	  	}
+  	} else {
+  		%>
+  		<h1 style="color: orange; font-weight: 900; font-size: 24px; text-align: center;">You aren't given access to the conviction records. If you want, you will have to request for it using the link given above.</h1>
+  		<%
+  	}
+  %>
   	
   </div>
-  
-  
-  	<!-- This is the "Are you sure" message for when deleting a certain thing -->
-     <div class="overlay" id="overlayPersonal">
-        <div class="alert-box">
-            <p>Are you sure you want to delete this criminal's record?</p>
-            <button onclick="confirmAction(true, 'personal')">YES</button>
-            <button onclick="confirmAction(false, 'personal')">NO</button>
-        </div>
-    </div>
-     <div class="overlay" id="overlayArrest">
-        <div class="alert-box">
-            <p>Are you sure you want to delete this arrest record? Note that its corresponding booking information will be deleted as well.</p>
-            <button onclick="confirmAction(true, 'arrest')">YES</button>
-            <button onclick="confirmAction(false, 'arrest')">NO</button>
-        </div>
-    </div>   
-     <div class="overlay" id="overlayBooking">
-        <div class="alert-box">
-            <p>Are you sure you want to delete this booking record? Note that its corresponding arrest record will be deleted as well.</p>
-            <button onclick="confirmAction(true, 'booking')">YES</button>
-            <button onclick="confirmAction(false, 'booking')">NO</button>
-        </div>
-    </div> 
-     <div class="overlay" id="overlayConviction">
-        <div class="alert-box">
-            <p>Are you sure you want to delete this conviction record?</p>
-            <button onclick="confirmAction(true, 'conviction')">YES</button>
-            <button onclick="confirmAction(false, 'conviction')">NO</button>
-        </div>
-    </div>       
+        
     <script>
 
-        function showArrestConfirmation() {
-            // Show the overlay and center the alert box
-            document.getElementById('overlayArrest').style.display = 'flex';
-        }
-        function showPersonalConfirmation() {
-            // Show the overlay and center the alert box
-            document.getElementById('overlayPersonal').style.display = 'flex';
-        }        
-        function showBookingConfirmation() {
-            // Show the overlay and center the alert box
-            document.getElementById('overlayBooking').style.display = 'flex';
-        }        
-        function showConvictionConfirmation() {
-            // Show the overlay and center the alert box
-            document.getElementById('overlayConviction').style.display = 'flex';
-        }
+	function confirmArrestRecordDelete(arrestRecordId) {
+	    var confirmation = confirm("Are you sure you want to delete the record?");
+	
+	    if (confirmation) {
+	    	window.location.href = 'deleteArrestRecord?arrest_record_id=' + arrestRecordId;
+	    }
+	}
+	function confirmCriminalRecordDelete(criminalId) {
+	    var confirmation = confirm("Are you sure you want to delete the record?");
+	
+	    if (confirmation) {
+	    	window.location.href = 'deleteCriminalRecord?criminal_id=' + criminalId;
+	    }
+	}      
+	function confirmBookingRecordDelete(booking_info_id) {
+	    var confirmation = confirm("Are you sure you want to delete the record?");
+	
+	    if (confirmation) {
+	    	window.location.href = 'deleteBookingRecord?booking_info_id=' + booking_info_id;
+	    }
+	}        
+	function confirmConvictionRecordDelete(conviction_record_id) {
+	    var confirmation = confirm("Are you sure you want to delete the record?");
+	
+	    if (confirmation) {
+	    	window.location.href = 'deleteConvictionRecord?conviction_record_id=' + conviction_record_id;
+	    }
+	}  
         
-        function confirmAction(isConfirmed, recordType) {
-            // Hide the overlay
-            document.getElementById('overlayArrest').style.display = 'none';
-            document.getElementById('overlayPersonal').style.display = 'none';
-            document.getElementById('overlayBooking').style.display = 'none';
-            document.getElementById('overlayConviction').style.display = 'none';
-
-            if (isConfirmed) {
-                // Perform the action when 'OK' is clicked
-                if (recordType == "personal"){
-                	alert('You clicked personal!');
-                	
-                } else if (recordType == "arrest"){
-                	alert('You clicked arrest!');
-
-                } else if (recordType == "booking"){
-                	alert('You clicked booking!');
-
-                } else if (recordType == "conviction"){
-                	alert('You clicked conviction!');                	
-                }
-            } else {
-                // Handle the action when 'Cancel' is clicked
-            }
-        }
     </script>
 </body>
 </html>

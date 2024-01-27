@@ -185,6 +185,7 @@ public class RecordDao {
 			
             if (resultSet.next()) {
             	
+            	cpr.setCriminalId(criminalId);
             	cpr.setAddress(resultSet.getString("address"));
             	cpr.setDateOfBirth(resultSet.getDate("date_of_birth"));
             	cpr.setFname(resultSet.getString("criminal_fname"));
@@ -259,6 +260,7 @@ public class RecordDao {
             	BookingRecord bi = new BookingRecord();
             	
             	bi.setCriminalId(criminalId);
+            	bi.setBookingInfoId(resultSet.getInt("booking_info_id"));
             	bi.setArrestRecordId(resultSet.getInt("arrest_record_id"));
             	bi.setMugshot(BookingRecord.blobToInputStream(resultSet.getBlob("mugshot")));
             	bi.setBookingNumber(resultSet.getString("booking_number"));
@@ -293,6 +295,7 @@ public class RecordDao {
             	ConvictionRecord cr = new ConvictionRecord();
             	
             	cr.setCriminalId(criminalId);
+            	cr.setConvictionRecordId(resultSet.getInt("conviction_record_id"));
             	cr.setDateOfConviction(resultSet.getDate("date_of_conviction"));
             	cr.setCriminalOffenses(resultSet.getString("convicted_offenses"));
             	cr.setSentencingDetails(resultSet.getString("sentencing_details"));
@@ -305,6 +308,40 @@ public class RecordDao {
             e.printStackTrace();
         }
         return recordList;
+    }
+
+ 
+    public boolean editCriminalRecord(CriminalPersonalRecord cpr) {
+        String query = "UPDATE criminal_personal_info SET criminal_fname = ?, criminal_lname = ?, date_of_birth = ?, "
+        		+ "gender = ?, race_ethnicity = ?, kebele_id = ?, address = ?, phone_number = ? WHERE criminal_id = ?";
+        
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+
+            preparedStatement.setString(1, cpr.getFname());
+            preparedStatement.setString(2, cpr.getLname());
+            preparedStatement.setDate(3, cpr.getDateOfBirth());
+            preparedStatement.setString(4, cpr.getGender());
+            preparedStatement.setString(5, cpr.getRaceAndEthnicity());
+            preparedStatement.setString(6, cpr.getKebeleId());
+            preparedStatement.setString(7, cpr.getAddress());
+            preparedStatement.setString(8, cpr.getPhoneNumber());
+            preparedStatement.setInt(9, cpr.getCriminalId());
+            
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    	
     }
 
     public boolean editArrestRecord(ArrestRecord ar) {
@@ -335,5 +372,174 @@ public class RecordDao {
             return false;
         }
     	
+    }
+
+    public boolean editBookingInfo(BookingRecord bi) {
+        String query = "UPDATE booking_info SET booking_number = ?, mugshot = ? WHERE booking_info_id = ?";
+        
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+
+            preparedStatement.setString(1, bi.getBookingNumber());
+            preparedStatement.setBlob(2, bi.getMugshot());
+            preparedStatement.setInt(3, bi.getBookingInfoId());
+
+                
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    	
+    }
+    
+    public boolean editConvictionRecord(ConvictionRecord cr) {
+        String query = "UPDATE conviction_records SET date_of_conviction = ?, convicted_offenses = ?,"
+        		+ " sentencing_details = ?, probation_parole_status = ? WHERE conviction_record_id = ?";
+        
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+        	          	
+            preparedStatement.setDate(1, cr.getDateOfConviction());
+            preparedStatement.setString(2, cr.getCriminalOffenses());
+            preparedStatement.setString(3, cr.getSentencingDetails());
+            preparedStatement.setString(4, cr.getParoleAndProbationStatus());
+            preparedStatement.setInt(5, cr.getConvictionRecordId());
+                
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    	
+    }
+    
+    public boolean deleteCriminalRecord(int criminal_id) {
+    	
+        String query = "DELETE FROM criminal_personal_info WHERE criminal_id = ?";
+    	String arrestQuery = "DELETE FROM arrest_records WHERE criminal_id = ?";
+        String bookingQuery = "DELETE FROM booking_info WHERE criminal_id = ?";
+        String convictionQuery = "DELETE FROM conviction_records WHERE criminal_id = ?";
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+        	PreparedStatement ps2 = connection.prepareStatement(arrestQuery); 
+        	PreparedStatement ps3 = connection.prepareStatement(bookingQuery); 
+        	PreparedStatement ps4 = connection.prepareStatement(convictionQuery); 
+        	
+            preparedStatement.setInt(1, criminal_id);
+            ps2.setInt(1, criminal_id);
+            ps3.setInt(1, criminal_id);          
+            ps4.setInt(1, criminal_id);   
+            
+            ps4.executeUpdate();
+            ps3.executeUpdate();
+            ps2.executeUpdate();
+            
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } 
+    	
+    }
+
+    public boolean deleteArrestRecord(int arrest_record_id) {
+    	
+        String query = "DELETE FROM arrest_records WHERE arrest_record_id = ?";
+        String bookingQuery = "DELETE FROM booking_info WHERE arrest_record_id = ?";
+        
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement preparedStatement = connection.prepareStatement(query);        	
+        	PreparedStatement ps2 = connection.prepareStatement(bookingQuery); 
+        	
+            preparedStatement.setInt(1, arrest_record_id);
+            ps2.setInt(1, arrest_record_id);
+              
+            ps2.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } 
+    }
+
+    public boolean deleteBookingInfo(int booking_info_id) {
+    	
+        String bookingQuery = "DELETE FROM booking_info WHERE booking_info_id = ?";
+        
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement ps = connection.prepareStatement(bookingQuery); 
+        	
+            ps.setInt(1, booking_info_id);
+
+            int rowsAffected = ps.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+  
+    public boolean deleteConvictionRecord(int conviction_record_id) {
+    	
+        String bookingQuery = "DELETE FROM conviction_records WHERE conviction_record_id = ?";
+        
+        try {
+        	
+        	Class.forName("com.mysql.cj.jdbc.Driver");
+        	connection = DriverManager.getConnection(DatabaseUtility.DB_URL, DatabaseUtility.DB_USERNAME, DatabaseUtility.DB_PASSWORD);
+        
+        	PreparedStatement ps = connection.prepareStatement(bookingQuery); 
+        	
+            ps.setInt(1, conviction_record_id);
+
+            int rowsAffected = ps.executeUpdate();
+            
+            return rowsAffected > 0;
+            
+                 
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }    	
     }
 }

@@ -8,7 +8,15 @@ public class ConvictionRecord {
 	private String criminalOffenses;
 	private String sentencingDetails;
 	private String paroleAndProbationStatus;
+	private int convictionRecordId;
+
 	
+	public int getConvictionRecordId() {
+		return convictionRecordId;
+	}
+	public void setConvictionRecordId(int convictionRecordId) {
+		this.convictionRecordId = convictionRecordId;
+	}
 	public int getCriminalId() {
 		return criminalId;
 	}

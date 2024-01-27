@@ -3,6 +3,7 @@ package com.aacra.record;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import com.aacra.auth.model.User;
 import com.aacra.record.dao.RecordDao;
 import com.aacra.record.model.ArrestRecord;
 import com.aacra.record.model.BookingRecord;
@@ -14,6 +15,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/pages/showCriminalRecord")
 public class ShowCriminalRecord extends HttpServlet{
@@ -25,6 +27,8 @@ public class ShowCriminalRecord extends HttpServlet{
 	}
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		
+		User userData = (User) request.getSession().getAttribute("userData");
 		
 		int criminal_id = Integer.parseInt(request.getParameter("criminal_id"));
 		RecordDao record = new RecordDao();
@@ -41,6 +45,8 @@ public class ShowCriminalRecord extends HttpServlet{
 		request.setAttribute("convictionRecords", cr);
 		request.setAttribute("criminal_id", criminal_id);
 		
+		HttpSession session = request.getSession();
+		session.setAttribute("userData", userData);
 		request.getRequestDispatcher("/pages/ShowCriminalRecord.jsp").forward(request, response);
 		
 	}

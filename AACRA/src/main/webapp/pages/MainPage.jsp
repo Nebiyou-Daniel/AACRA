@@ -36,12 +36,16 @@
     <nav>
         <ul>
             <li><a href="Search.jsp">Search Records</a></li>
-        <% if(role.equals("admin")){
-   
+
+        <% if(role.equals("admin")){ 
         %>
             <li><a href="AddRecord.jsp">Add New Record</a></li>
-           	<li><a href="viewRequests">View Requests from Users</a></li> 
+           	<li><a href="viewAllRecordRequests">View Record Requests from Users</a></li> 
          <%
+        } else {
+        	%>
+            <li><a href="viewYourRequests?userId=<%= insertedUserData.getUserId()%>">View Record Requests</a></li>        	
+        	<%
         }
          %>
         </ul>

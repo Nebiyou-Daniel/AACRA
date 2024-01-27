@@ -42,10 +42,12 @@ public class SignupServlet extends HttpServlet{
         // Check if the email is available, all form data are in correct formats, 
         // and adhere to conditions they were given.     
         boolean success = userDao.checkUserData(user, request.getParameter("confirmPassword"));
+        int userId = userDao.fetchUserId(email);
 
         if (success) {
         	// Use the role attribute to specify the next servlet the user data will go to.
         	String urlPage;
+        	user.setUserId(userId);
         	
         	if ("regular".equals(user.getRole())) {
         		urlPage = "/regularUserSignup";

@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/regularUserSignup")
 public class RegularUserSignupServlet extends HttpServlet{
@@ -33,6 +34,9 @@ public class RegularUserSignupServlet extends HttpServlet{
 
         if (success) {
         	request.setAttribute("userData", user);
+        	HttpSession session = request.getSession();
+        	session.setAttribute("userData", user);
+        	session.setMaxInactiveInterval(7200);
         	request.getRequestDispatcher("/main").forward(request, response);
 
         } else {

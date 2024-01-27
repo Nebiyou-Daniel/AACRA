@@ -35,11 +35,10 @@ public class SearchRecordsServlet extends HttpServlet {
         String race_ethnicity = request.getParameter("race_ethnicity");
         String kebele_id = request.getParameter("kebele_id");
         String address = request.getParameter("address");
-        String phone_number = request.getParameter("phone_number");  
-
+        String phone_number = request.getParameter("phone_number");
 
         Date date_of_birth;
-        if (request.getParameter("date_of_birth") != "") {        	
+        if (request.getParameter("date_of_birth") != "" && request.getParameter("date_of_birth") != null) {        	
         	date_of_birth = Date.valueOf(request.getParameter("date_of_birth"));
         } else {
         	date_of_birth = null;
@@ -47,22 +46,22 @@ public class SearchRecordsServlet extends HttpServlet {
 
         // Check if they are not null and add to the query depending on the result of the if statements
         if (date_of_birth != null) {
-        	searchQuery = searchQuery + " AND date_of_birth = " + date_of_birth;
+        	searchQuery = searchQuery + " AND date_of_birth = '" + date_of_birth + "'";
         }
-        if (gender != "") {
-        	searchQuery = searchQuery + " AND gender = " + gender;
+        if (gender != "" && gender != null) {
+        	searchQuery = searchQuery + " AND gender = '" + gender + "'";
         }        
-        if (race_ethnicity != "") {
-        	searchQuery = searchQuery + " AND race_ethnicity = " + race_ethnicity;
+        if (race_ethnicity != "" && race_ethnicity != null) {
+        	searchQuery = searchQuery + " AND race_ethnicity = '" + race_ethnicity + "'";
         }        
-        if (kebele_id != "") {
-        	searchQuery = searchQuery + " AND kebele_id = " + kebele_id;
+        if (kebele_id != "" && kebele_id != null) {
+        	searchQuery = searchQuery + " AND kebele_id = '" + kebele_id + "'";
         }        
-        if (address != "") {
-        	searchQuery = searchQuery + " AND address = " + address;
+        if (address != ""&& address != null) {
+        	searchQuery = searchQuery + " AND address = '" + address + "'";
         }        
-        if (phone_number != "") {
-        	searchQuery = searchQuery + " AND phone_number = " + phone_number;
+        if (phone_number != "" && phone_number != null) {
+        	searchQuery = searchQuery + " AND phone_number = '" + phone_number + "'";
         }    
         
 		try {				

@@ -3,7 +3,7 @@ package com.aacra.record.model;
 import java.sql.Date;
 
 public class CriminalPersonalRecord {
-
+	
 	private String fname;
 	private String lname;
 	private Date dateOfBirth;
@@ -12,7 +12,15 @@ public class CriminalPersonalRecord {
 	private String kebeleId;
 	private String address;
 	private String phoneNumber;
+	private int criminalId;
 	
+	
+	public int getCriminalId() {
+		return criminalId;
+	}
+	public void setCriminalId(int criminalId) {
+		this.criminalId = criminalId;
+	}
 	public String getFname() {
 		return fname;
 	}

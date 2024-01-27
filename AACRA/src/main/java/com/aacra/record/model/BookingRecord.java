@@ -7,13 +7,21 @@ import java.sql.Blob;
 import java.sql.SQLException;
 
 public class BookingRecord {
+	
 	private int arrestRecordId;
 	private int criminalId;
-	
+	private int bookingInfoId;
 	private InputStream mugshot;
 	private OutputStream mugshotPhoto;
 	private String bookingNumber;
 	
+	
+	public int getBookingInfoId() {
+		return bookingInfoId;
+	}
+	public void setBookingInfoId(int bookingInfoId) {
+		this.bookingInfoId = bookingInfoId;
+	}
 	public int getCriminalId() {
 		return criminalId;
 	}

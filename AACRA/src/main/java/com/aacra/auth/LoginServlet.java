@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/pages/login")
 public class LoginServlet extends HttpServlet{
@@ -38,8 +39,10 @@ public class LoginServlet extends HttpServlet{
         User userData = userDao.validateUser(user);
 
         if (userData != null) {
-        	
-        	request.getSession().setAttribute("userData", userData);
+        	HttpSession session = request.getSession();
+        	session.setAttribute("userData", userData);
+        	session.setMaxInactiveInterval(7200);
+
         	request.getRequestDispatcher("/main").forward(request, response);        	
 
         } else {
